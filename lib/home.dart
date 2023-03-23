@@ -1,9 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:taller_3/converter.dart';
+import 'package:taller_3/record_view.dart';
+import 'package:taller_3/models/record.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   const Home({super.key});
 
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  List<Record> records = [
+    Record(name: 'gerson', country: 'Peru', dollar: 3.4, euro: 3.5)
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,11 +27,13 @@ class Home extends StatelessWidget {
         ),
         title: const Text('Convertidor de moneda'),
       ),
-      body: const TabBarView(
+      body: TabBarView(
         children: [
-          Presentation(),
-          Converter(),
-          Icon(Icons.directions_bike),
+          const Presentation(),
+          const Converter(),
+          RecordView(
+            records: records,
+          )
         ],
       ),
     );
