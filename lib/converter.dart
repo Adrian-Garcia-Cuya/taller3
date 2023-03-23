@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:taller_3/validations.dart';
 
+import 'package:taller_3/models/record.dart';
+
 class Converter extends StatefulWidget {
-  const Converter({super.key});
+  final Function(Record) saveRecord;
+  const Converter({super.key, required this.saveRecord});
 
   @override
   State<Converter> createState() => _ConverterState();
 }
 
 class _ConverterState extends State<Converter> {
+  final myController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   final List<String> list = <String>['Peru', 'Mexico', 'Chile', 'Bolivia'];
 
@@ -17,7 +21,7 @@ class _ConverterState extends State<Converter> {
   String? email;
   String? age;
   String? country;
-  double? amount;
+  double? amount = 0;
 
   // map con los equivalentes del dolar en peru, mexico, chile y bolivia
   final Map<String, double> _equivalencesDollar = {
@@ -37,6 +41,18 @@ class _ConverterState extends State<Converter> {
 
   @override
   Widget build(BuildContext context) {
+    void cleanForm() {
+      print('si entra');
+      setState(() {
+        name = '';
+        email = '';
+        age = '';
+        country = '';
+        amount = 0;
+      });
+      print(name);
+    }
+
     InputDecoration inputDecoration(String label) => InputDecoration(
           labelText: label,
         );
@@ -118,15 +134,32 @@ class _ConverterState extends State<Converter> {
                     ],
                   ),
                   TextFormField(
-                    decoration: inputDecoration('Monto'),
-                    validator: validateNumber,
-                  ),
+                      initialValue: amount.toString(),
+                      decoration: inputDecoration('Monto'),
+                      validator: validateNumber,
+                      onChanged: (text) => {
+                            setState(() {
+                              amount = double.parse(text);
+                            })
+                          }),
                 ],
               ),
             ),
             ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
+                    Record newRecord = Record(
+                      name: name!,
+                      country: countrySelected,
+                      dollar: double.parse(
+                          (amount! / _equivalencesDollar[countrySelected]!)
+                              .toStringAsFixed(2)),
+                      euro: double.parse(
+                          (amount! / _equivalencesEuro[countrySelected]!)
+                              .toStringAsFixed(2)),
+                    );
+                    widget.saveRecord(newRecord);
+                    cleanForm();
                     showDialog<String>(
                       context: context,
                       builder: (BuildContext context) => AlertDialog(

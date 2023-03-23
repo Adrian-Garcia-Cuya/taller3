@@ -7,6 +7,18 @@ class RecordView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(records[0].name);
+    return ListView.separated(
+        itemBuilder: (context, index) {
+          return ListTile(
+            title: Text(records[index].name),
+            subtitle: Text(records[index].country),
+            trailing: Text(
+                '\$${records[index].dollar.toString()} - €${records[index].euro.toString()}'),
+          );
+        },
+        separatorBuilder: (context, index) => const SizedBox(
+              height: 20,
+            ),
+        itemCount: records.length);
   }
 }

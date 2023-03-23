@@ -11,9 +11,14 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  List<Record> records = [
-    Record(name: 'gerson', country: 'Peru', dollar: 3.4, euro: 3.5)
-  ];
+  List<Record> records = [];
+
+  void saveRecord(Record record) {
+    setState(() {
+      records.add(record);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,7 +35,7 @@ class _HomeState extends State<Home> {
       body: TabBarView(
         children: [
           const Presentation(),
-          const Converter(),
+          Converter(saveRecord: saveRecord),
           RecordView(
             records: records,
           )
